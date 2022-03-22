@@ -38,7 +38,6 @@ def test_univariate_gaussian():
                        xaxis_title="Sample Value", yaxis_title="Gaussian "
                                                                "Value")
     fig2.show()
-    print(normal_dist_var.log_likelihood(true_mu, true_sigma, normal_dist))
 
 
 def test_multivariate_gaussian():
