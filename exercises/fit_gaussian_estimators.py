@@ -39,12 +39,6 @@ def test_univariate_gaussian():
                                                                "Value")
     fig2.show()
     print(normal_dist_var.log_likelihood(true_mu, true_sigma, normal_dist))
-    sample = np.array([1, 5, 2, 3, 8, -4, -2, 5, 1, 10, -10, 4, 5, 2, 7, 1,
-                       1,  3, 2, -1, -3, 1, -4, 1, 2, 1, -4, -4, 1, 3, 2, 6,
-                       -6, 8, 3, -6, 4, 1, -2, 3, 1, 4, 1, 4, -2, 3, -1, 0,
-                       3, 5, 0, -2])
-    print(normal_dist_var.log_likelihood(1, 1, sample))
-    print(normal_dist_var.log_likelihood(10, 1, sample))
 
 
 def test_multivariate_gaussian():
