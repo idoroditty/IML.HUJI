@@ -226,3 +226,4 @@ class MultivariateGaussian:
         normal_sum *= -0.5
         sqrt = np.sqrt(np.power(2 * np.pi, cov.shape[0]) * np.linalg.det(cov))
         return X.shape[0] * np.log(1 / sqrt) + normal_sum
+
