@@ -59,7 +59,6 @@ class UnivariateGaussian:
             self.var_ = sample_sum / X.size
         else:
             self.var_ = sample_sum / (X.size - 1)
-        # self.var_ = np.var(X, ddof=1)
         self.fitted_ = True
         return self
 
