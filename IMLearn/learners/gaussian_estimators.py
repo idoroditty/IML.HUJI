@@ -113,12 +113,11 @@ class UnivariateGaussian:
             log-likelihood calculated
         """
         mu_sum = 0
-        var = np.power(sigma, 2)
         for x in X:
             mu_sum += np.power((x - mu), 2)
         arg1 = -(X.size / 2)
-        arg2 = np.log(2 * np.pi * var)
-        arg3 = -mu_sum / (2 * var)
+        arg2 = np.log(2 * np.pi * sigma)
+        arg3 = -mu_sum / (2 * sigma)
         return arg1 * arg2 + arg3
 
 
@@ -189,8 +188,9 @@ class MultivariateGaussian:
         ValueError: In case function was called prior fitting the model
         """
         if not self.fitted_:
-            raise ValueError("Estimator must first be fitted before calling `pdf` function")
-        power_exp = (X - self.mu_) @ np.linalg.inv(self.cov_) * (X - self.mu_)
+            raise ValueError("Estimator must first be fitted before calling"
+                             " `pdf` function")
+        power_exp = (X - self.mu_) @ inv(self.cov_) * (X - self.mu_)
         sum_power_exp = np.sum(power_exp, axis=1)
         sum_power_exp *= -0.5
         det_val = det(self.cov_)
@@ -198,7 +198,8 @@ class MultivariateGaussian:
                              det_val))) * np.exp(sum_power_exp)
 
     @staticmethod
-    def log_likelihood(mu: np.ndarray, cov: np.ndarray, X: np.ndarray) -> float:
+    def log_likelihood(mu: np.ndarray, cov: np.ndarray, X: np.ndarray) ->  \
+            float:
         """
         Calculate the log-likelihood of the data under a specified Gaussian model
 
@@ -217,10 +218,10 @@ class MultivariateGaussian:
             log-likelihood calculated over all input data and under given parameters of Gaussian
         """
         normal_sum = 0
-        inv_cov = np.linalg.inv(cov)
+        inv_cov = inv(cov)
         for x in X:
             mat_mul = np.matmul((x - mu).transpose(), inv_cov)
             normal_sum += np.matmul(mat_mul, (x - mu))
         normal_sum *= -0.5
-        sqrt = np.sqrt(np.power(2 * np.pi, cov.shape[0]) * np.linalg.det(cov))
+        sqrt = np.sqrt(np.power(2 * np.pi, cov.shape[0]) * det(cov))
         return X.shape[0] * np.log(1 / sqrt) + normal_sum

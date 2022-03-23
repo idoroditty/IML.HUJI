@@ -30,9 +30,10 @@ def test_univariate_gaussian():
     fig.show()
 
     # Question 3 - Plotting Empirical PDF of fitted model
-    estimated_normal_dist_arr = normal_dist_var.pdf(normal_dist)
+    estimated_normal_dist_arr = normal_dist_var.pdf(np.sort(normal_dist))
     fig2 = go.Figure()
-    fig2.add_trace(go.Scatter(x=normal_dist, y=estimated_normal_dist_arr,
+    fig2.add_trace(go.Scatter(x=np.sort(normal_dist),
+                              y=estimated_normal_dist_arr,
                               name="Graph", mode="markers"))
     fig2.update_layout(title="PDF values as a function of the sample value",
                        xaxis_title="Sample Value", yaxis_title="Gaussian "
