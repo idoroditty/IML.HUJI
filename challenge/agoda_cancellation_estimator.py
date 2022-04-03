@@ -2,6 +2,11 @@ from __future__ import annotations
 from typing import NoReturn
 from IMLearn.base import BaseEstimator
 import numpy as np
+from sklearn.neighbors import KDTree
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import tree
+
+from sklearn import svm
 
 
 class AgodaCancellationEstimator(BaseEstimator):
@@ -22,6 +27,7 @@ class AgodaCancellationEstimator(BaseEstimator):
 
         """
         super().__init__()
+        self.classifier = tree.DecisionTreeClassifier()
 
     def _fit(self, X: np.ndarray, y: np.ndarray) -> NoReturn:
         """
@@ -39,7 +45,8 @@ class AgodaCancellationEstimator(BaseEstimator):
         -----
 
         """
-        pass
+        X = X[:,1:]
+        self.classifier.fit(X, y)
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -55,7 +62,9 @@ class AgodaCancellationEstimator(BaseEstimator):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        return np.zeros(X.shape[0])
+        X = X[:, 1:]
+        prediction = self.classifier.predict(X)
+        return prediction
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
