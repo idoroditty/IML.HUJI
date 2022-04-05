@@ -90,8 +90,7 @@ if __name__ == '__main__':
 
     # Question 4 - Fitting model for different values of `k`
     israel_features_train, israel_temp_train, israel_features_test, \
-        israel_temp_test = split_train_test(israel_without_temp,
-                            israel_temp, train_proportion=0.75)
+        israel_temp_test = split_train_test(israel_without_temp, israel_temp)
     israel_losses = []
     for k in range(1, 11):
         poly_estimator = PolynomialFitting(k)
