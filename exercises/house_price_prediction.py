@@ -47,6 +47,19 @@ def date_to_year(full_data):
     full_data.insert(1, "selling_year", selling_year)
 
 
+def drop_negative_values(full_data):
+    for feature in full_data.columns:
+        if feature == "date" or feature == "lat" or feature == "long":
+            continue
+        elif feature == "id" or feature == "price":
+            full_data.drop(full_data[(full_data[feature] <= 0)].index,
+                           inplace=True)
+        else:
+            full_data.drop(full_data[(full_data[feature] < 0)].index,
+                           inplace=True)
+    return full_data
+
+
 def load_data(filename: str):
     """
     Load house prices dataset and preprocess data.
@@ -64,7 +77,7 @@ def load_data(filename: str):
     # corr_data = pd.DataFrame(np.round(full_data.corr(), 3))
     # corr_fig = px.imshow(corr_data, text_auto=True, height=1000, width=1000)
     # corr_fig.show()
-    full_data.drop(full_data[(full_data["id"] == 0)].index, inplace=True)
+    full_data = drop_negative_values(full_data)
     floors_by_categories = floors_num_to_columns(full_data)
     year_to_duration(full_data)
     date_to_year(full_data)
