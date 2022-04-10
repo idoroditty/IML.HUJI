@@ -69,8 +69,7 @@ def insert_new_columns(full_data: DataFrame):
         check_in_date = pd.to_datetime(row[1][2])
         check_out_date = pd.to_datetime(row[1][3])
         estimated_vacation_time = (check_out_date - check_in_date).days
-        if 'cancellation_datetime' in full_data.columns and \
-                row[1][cancelling_date_ind] is not None:
+        if 'cancellation_datetime' in full_data.columns and row[1][cancelling_date_ind] is not None:
             cancelling_date = pd.to_datetime(row[1][cancelling_date_ind])
             delta_from_booking = (cancelling_date - booking_date).days
             cancelling_days_from_booking.append(delta_from_booking + 1)
@@ -103,8 +102,7 @@ def load_data(filename: str):
     Design matrix and response vector in either of the following formats:
     1) Single dataframe with last column representing the response
     2) Tuple of pandas.DataFrame and Series
-    3) Tuple of ndarray of shape (n_samples, n_features) and ndarray of shape
-     (n_samples,)
+    3) Tuple of ndarray of shape (n_samples, n_features) and ndarray of shape (n_samples,)
     """
     full_data = pd.read_csv(filename).drop_duplicates()
     insert_new_columns(full_data)
@@ -128,17 +126,14 @@ def load_data(filename: str):
 
 def evaluate_and_export(estimator: BaseEstimator, X: np.ndarray, filename: str):
     """
-    Export to specified file the prediction results of given estimator on given
-     testset.
+    Export to specified file the prediction results of given estimator on given testset.
 
-    File saved is in csv format with a single column named 'predicted_values'
-    and n_samples rows containing
+    File saved is in csv format with a single column named 'predicted_values' and n_samples rows containing
     predicted values.
 
     Parameters
     ----------
-    estimator: BaseEstimator or any object implementing predict() method as in
-     BaseEstimator (for example sklearn)
+    estimator: BaseEstimator or any object implementing predict() method as in BaseEstimator (for example sklearn)
         Fitted estimator to use for prediction
 
     X: ndarray of shape (n_samples, n_features)
@@ -152,16 +147,13 @@ def evaluate_and_export(estimator: BaseEstimator, X: np.ndarray, filename: str):
     counter_estimated = 0
     res = []
     for i in range(len(X)):
-        cancel_estimated = pd.to_datetime(X[i, 0])+pd.to_timedelta(
-            prediction[i], unit="days")
-        if pd.to_datetime("2018-12-07") <= cancel_estimated <= \
-                pd.to_datetime("2018-12-13"):
+        cancel_estimated = pd.to_datetime(X[i, 0])+pd.to_timedelta(prediction[i], unit="days")
+        if pd.to_datetime("2018-12-07") <= cancel_estimated <= pd.to_datetime("2018-12-13"):
             res.append(1)
             counter_estimated += 1
         else:
             res.append(0)
-    pd.DataFrame(res, columns=["predicted_values"]).to_csv(filename,
-                                                           index=False)
+    pd.DataFrame(res, columns=["predicted_values"]).to_csv(filename, index=False)
     print(counter_estimated)
     return
 
@@ -170,11 +162,10 @@ if __name__ == '__main__':
     np.random.seed(0)
 
     # Load data
-    df, cancellation_labels = \
-        load_data("../datasets/agoda_cancellation_train.csv")
+    df, cancellation_labels = load_data("../datasets/agoda_cancellation_train.csv")
     # Fit model over data
-    train_X, train_y, temp_X, temp_y = split_train_test(df,
-                    cancellation_labels, train_proportion=1)# for test-set
+    train_X, train_y, temp_X, temp_y = split_train_test(df, cancellation_labels, train_proportion=1) # for test-set
+    # train_X, train_y, temp_X, temp_y = split_train_test(df, cancellation_labels) # for train-set
 
     train_X = train_X.fillna(0).to_numpy()
     train_y = train_y.fillna(0).to_numpy()
@@ -183,13 +174,11 @@ if __name__ == '__main__':
     estimator = AgodaCancellationEstimator().fit(train_X, train_y)
 
     # Store model predictions over test set
-    df_test, cancellation_labels_test = \
-        load_data("../challenge/test_set_week_1.csv")
-    test_X, test_y, temp_X2, temp_y2 = split_train_test(df_test,
-                                cancellation_labels_test, train_proportion=1)
-    test_X = test_X.fillna(0).to_numpy()
+    df_test, cancellation_labels_test = load_data("../challenge/test_set_week_2.csv")
+    # test_X, test_y, temp_X2, temp_y2 = split_train_test(df_test, cancellation_labels_test, train_proportion=1)
+    test_X = df_test.fillna(0).to_numpy()
 
     # evaluate_and_export(estimator, temp_X, "id1_id2_id3.csv") # for train-set
 
-    evaluate_and_export(estimator, test_X, "208385633_315997874_206948911.csv")
-    # for test-set
+    evaluate_and_export( estimator, test_X,
+                         "208385633_315997874_206948911.csv" ) # for test-set

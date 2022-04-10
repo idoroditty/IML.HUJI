@@ -8,7 +8,6 @@ from sklearn import tree
 
 from sklearn import svm
 
-
 class AgodaCancellationEstimator(BaseEstimator):
     """
     An estimator for solving the Agoda Cancellation challenge
@@ -65,6 +64,7 @@ class AgodaCancellationEstimator(BaseEstimator):
         X = X[:, 1:]
         prediction = self.classifier.predict(X)
         return prediction
+
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
