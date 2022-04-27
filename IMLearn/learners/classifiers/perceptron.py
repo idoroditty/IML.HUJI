@@ -4,6 +4,8 @@ from typing import NoReturn
 from ...base import BaseEstimator
 import numpy as np
 
+from ...metrics import misclassification_error
+
 
 def default_callback(fit: Perceptron, x: np.ndarray, y: int):
     pass
@@ -73,7 +75,17 @@ class Perceptron(BaseEstimator):
         -----
         Fits model with or without an intercept depending on value of `self.fit_intercept_`
         """
-        raise NotImplementedError()
+        if self.include_intercept_:
+            X = np.insert(X, 0, 1, axis=1)
+        self.coefs_ = np.zeros(X.shape[1])
+        num_of_iters = 0
+        invalid_ind = self.find_invalid_ind(X, y)
+        while num_of_iters < self.max_iter_ and invalid_ind > -1:
+            self.coefs_ = self.coefs_ + (y[invalid_ind] * X[invalid_ind])
+            self.fitted_ = True
+            self.callback_(self, X[invalid_ind], y[invalid_ind])
+            invalid_ind = self.find_invalid_ind(X, y)
+            num_of_iters += 1
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -89,7 +101,12 @@ class Perceptron(BaseEstimator):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        raise NotImplementedError()
+        if self.include_intercept_:
+            X = np.insert(X, 0, 1, axis=1)
+        prediction = np.zeros(X.shape[0])
+        for i in range(X.shape[0]):
+            prediction[i] = np.sign(self.coefs_.transpose() @ X[i])
+        return prediction
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -109,4 +126,11 @@ class Perceptron(BaseEstimator):
             Performance under missclassification loss function
         """
         from ...metrics import misclassification_error
-        raise NotImplementedError()
+        predicted_y = self._predict(X)
+        return misclassification_error(y, predicted_y)
+
+    def find_invalid_ind(self, X, y):
+        for i in range(X.shape[0]):
+            if y[i] * (self.coefs_.transpose() @ X[i]) <= 0:
+                return i
+        return -1
