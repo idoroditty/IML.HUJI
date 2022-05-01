@@ -1,5 +1,10 @@
 from __future__ import annotations
 from typing import NoReturn
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+
+
 from IMLearn.base import BaseEstimator
 import numpy as np
 from sklearn.neighbors import KDTree
@@ -24,7 +29,9 @@ class AgodaCancellationEstimator(BaseEstimator):
 
         """
         super().__init__()
-        self.classifier = tree.DecisionTreeClassifier()
+        # self.classifier = AdaBoostClassifier()
+        self.classifier = RandomForestClassifier(warm_start=True)
+        # self.classifier = tree.DecisionTreeClassifier()
 
     def _fit(self, X: np.ndarray, y: np.ndarray) -> NoReturn:
         """

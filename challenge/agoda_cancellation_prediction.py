@@ -76,7 +76,10 @@ def calculate_canceling_fund_present(full_data):
 def calc_booking_checking(full_data):
     checking_date = pd.to_datetime(full_data["checkin_date"])
     booking_date = pd.to_datetime(full_data["booking_datetime"])
-    full_data["time_from_booking_to_check_in"] = (checking_date - booking_date).dt.days
+    full_data["time_from_booking_to_check_in"] = (checking_date -
+                                                  booking_date).dt.days + 1
+    full_data.drop(full_data[full_data["time_from_booking_to_check_in"] <
+                    0].index, inplace=True)
 
 
 def calc_checking_checkout(full_data):
@@ -93,7 +96,9 @@ def country_code(full_data: DataFrame):
 def calc_booking_canceling(full_data):
     booking_date = pd.to_datetime(full_data["booking_datetime"])
     cancel_date = pd.to_datetime(full_data["cancellation_datetime"])
-    full_data["cancelling_days_from_booking"] = (cancel_date - booking_date).dt.days
+    full_data["cancelling_days_from_booking"] = (cancel_date -
+                                                 booking_date).dt.days + 1
+    full_data["cancelling_days_from_booking"].fillna(-1, inplace=True)
 
 
 def charge_option_to_hashcode(full_data):
@@ -160,12 +165,15 @@ def evaluate_and_export(estimator: BaseEstimator, X: np.ndarray, filename: str):
     prediction = estimator.predict(X)
     res = []
     for i in range(len(X)):
-        cancel_estimated = pd.to_datetime(X[i, 0]) + pd.to_timedelta(prediction[i], unit="days")
-        if pd.to_datetime("2018-12-07") <= cancel_estimated <= pd.to_datetime("2018-12-13"):
+        cancel_estimated = pd.to_datetime(X[i, 0]) + \
+                           pd.to_timedelta(prediction[i], unit="days")
+        if pd.to_datetime("2018-12-07") <= cancel_estimated <=\
+                pd.to_datetime("2018-12-13"):
             res.append(1)
         else:
             res.append(0)
-    pd.DataFrame(res, columns=["predicted_values"]).to_csv(filename, index=False)
+    pd.DataFrame(res, columns=["predicted_values"]).to_csv(filename,
+                                                           index=False)
     return
 
 
