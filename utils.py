@@ -59,6 +59,7 @@ custom = [[0.0, "rgb(165,0,38)"],
 class_symbols = np.array(["circle", "x", "diamond"])
 class_colors = lambda n: [custom[i] for i in np.linspace(0, len(custom)-1, n).astype(int)]
 
+
 def decision_surface(predict, xrange, yrange, density=120, dotted=False, colorscale=custom, showscale=True):
     xrange, yrange = np.linspace(*xrange, density), np.linspace(*yrange, density)
     xx, yy = np.meshgrid(xrange, yrange)
