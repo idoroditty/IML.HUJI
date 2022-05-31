@@ -256,7 +256,7 @@ if __name__ == '__main__':
 
     clf.fit(df, label_bool)
     reg.fit(df_cancel, label_time)
-    full_test = load_data("week_7_test_set.csv")
+    full_test = load_data("week_8_test_set.csv")
 
     df_test = drop_data(full_test)
     df_test = preprocess_data(df_test, hot_enc, label_enc)
