@@ -123,7 +123,9 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
     ridge_min_ind = np.argmin(np.array(ridge_validation_scores))
     lasso_min_ind = np.argmin(np.array(lasso_validation_scores))
     lam_ridge_min = lambdas[ridge_min_ind]
+    print("Ridge lambda: ", lam_ridge_min)
     lam_lasso_min = lambdas[lasso_min_ind]
+    print("Lasso lambda: ", lam_lasso_min)
     ridge_estimator = RidgeRegression(lam_ridge_min)
     lasso_estimator = Lasso(lam_lasso_min)
     linear_regression_estimator = LinearRegression()
