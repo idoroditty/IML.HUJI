@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from typing import Tuple, List, Callable, Type
 
-from IMLearn import BaseModule
+from IMLearn.base import BaseModule
 from IMLearn.desent_methods import GradientDescent, FixedLR, ExponentialLR
 from IMLearn.desent_methods.modules import L1, L2
 from IMLearn.learners.classifiers.logistic_regression import LogisticRegression
@@ -73,12 +73,33 @@ def get_gd_state_recorder_callback() -> Tuple[Callable[[], None], List[np.ndarra
     weights: List[np.ndarray]
         Recorded parameters
     """
-    raise NotImplementedError()
+    values = []
+    list_of_weights = []
+
+    def callback(solver, weights, val, grad, t, eta, delta):
+        values.append(val)
+        list_of_weights.append(weights)
+    return callback, values, list_of_weights
 
 
 def compare_fixed_learning_rates(init: np.ndarray = np.array([np.sqrt(2), np.e / 3]),
                                  etas: Tuple[float] = (1, .1, .01, .001)):
-    raise NotImplementedError()
+    X = np.array([])
+    y = np.array([])
+    for eta in etas:
+        L1_module = L1(init)
+        L2_module = L2(init)
+        lr = FixedLR(eta)
+        L1_callback, L1_values, L1_weights = get_gd_state_recorder_callback()
+        L2_callback, L2_values, L2_weights = get_gd_state_recorder_callback()
+        GradientDescent(learning_rate=lr, callback=L1_callback).fit(f=L1_module, X=X, y=y)
+        GradientDescent(learning_rate=lr, callback=L2_callback).fit(f=L2_module, X=X, y=y)
+        L1_fig = plot_descent_path(L1, np.concatenate(L1_weights, axis=0).reshape(len(L1_weights), len(init)),
+                                   title=f"L1 Module: eta={eta}")
+        L1_fig.show()
+        L2_fig = plot_descent_path(L2, np.concatenate(L2_weights, axis=0).reshape(len(L2_weights), len(init)),
+                                   title=f"L2 Module: eta={eta}")
+        L2_fig.show()
 
 
 def compare_exponential_decay_rates(init: np.ndarray = np.array([np.sqrt(2), np.e / 3]),
