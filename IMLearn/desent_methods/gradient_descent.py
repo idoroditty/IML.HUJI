@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import copy
 from typing import Callable, NoReturn
 import numpy as np
 
@@ -119,23 +121,26 @@ class GradientDescent:
                 Euclidean norm of w^(t)-w^(t-1)
 
         """
-        best_solution = f.weights
-        best_value = f.compute_output()
-        solution_sum = np.zeros(f.weights.shape[0])
+        if f.weights is None:
+            f.weights(np.random.rand(X.shape[1]))
+        best_solution = f.weights_
+        best_value = f.compute_output(X=X, y=y)
+        solution_sum = np.zeros(f.weights_.shape[0])
         iter = 0
         for i in range(self.max_iter_):
-            solution_sum += f.weights
-            temp_weight = f.weights
-            f.weights = f.weights - self.learning_rate_.lr_step() * f.compute_jacobian()
-            temp_value = f.compute_output()
+            solution_sum += f.weights_
+            temp_weight = f.weights_
+            f.weights = f.weights_ - self.learning_rate_.lr_step(t=i) * f.compute_jacobian(X=X, y=y)
+            temp_value = f.compute_output(X=X, y=y)
             if temp_value < best_value:
                 best_value = temp_value
-                best_solution = f.weights
-            delta = np.linalg.norm(f.weights - temp_weight)
+                best_solution = f.weights_
+            delta = np.linalg.norm(f.weights_ - temp_weight)
+            self.callback_(solver=self, weights=f.weights_, val=f.compute_output(X=X, y=y),
+                           grad=f.compute_jacobian(X=X, y=y),
+                           t=i, eta=self.learning_rate_.lr_step(t=i), delta=delta)
             if delta < self.tol_:
                 break
-            self.callback_(solver=self, weights=f.weights, val=f.compute_output(), grad=f.compute_jacobian(),
-                           t=i, eta=self.learning_rate_.lr_step(), delta=delta)
             iter += 1
         if self.out_type_ == OUTPUT_VECTOR_TYPE[0]:
             return f.weights
@@ -143,5 +148,3 @@ class GradientDescent:
             return best_solution
         else:
             return (1 / iter) * solution_sum
-
-
