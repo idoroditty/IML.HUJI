@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
-from sklearn import preprocessing
+from sklearn import preprocessing, metrics
 from sklearn.base import BaseEstimator
 
 
@@ -181,7 +181,6 @@ def drop_data(full_data: pd.DataFrame):
                     'hotel_id',
                     'h_customer_id',
                     'request_twinbeds'],
-
                    axis=1,
                    inplace=True)
     # more than 40 present is missing (not including the canceling date which 73.91193167288907% nan)
@@ -256,7 +255,7 @@ if __name__ == '__main__':
 
     clf.fit(df, label_bool)
     reg.fit(df_cancel, label_time)
-    full_test = load_data("week_8_test_set.csv")
+    full_test = load_data("week_10_test_data.csv")
 
     df_test = drop_data(full_test)
     df_test = preprocess_data(df_test, hot_enc, label_enc)
