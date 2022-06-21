@@ -122,7 +122,7 @@ class GradientDescent:
 
         """
         if f.weights is None:
-            f.weights(np.random.rand(X.shape[1]))
+            f.weights_ = np.random.rand(X.shape[1])
         best_solution = f.weights_
         best_value = f.compute_output(X=X, y=y)
         solution_sum = np.zeros(f.weights_.shape[0])
